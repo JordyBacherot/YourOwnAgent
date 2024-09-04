@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "YourOwnAgent"
+version = "0.1.0"
+description = ""
+authors = ["JordyBacherot <jordy.bacherot@outlook.fr>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+streamlit = "^1.38.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
