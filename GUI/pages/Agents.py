@@ -1,8 +1,9 @@
 import streamlit as st
-from streamlit import selectbox
 import json
 import sys
 import os
+from streamlit_extras.switch_page_button import switch_page
+
 
 # Ajouter le répertoire parent du projet au sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
@@ -10,12 +11,14 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 # Importer la fonction depuis ToJson.py
 from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents
 
+# Functions
+#-------------------------------------------------#
 
 @st.dialog("Create an agent with Groq")
 def dialog_create_groq_agent():
     keynames = get_key("groqkey")
     if keynames is not None:
-        st.session_state.keyname = selectbox("Choose a key name", keynames)
+        st.session_state.keyname = st.selectbox("Choose a key name", keynames)
         st.session_state.key = keynames[st.session_state.keyname]
     else :
         st.write("You have to add a key")
@@ -44,7 +47,7 @@ def dialog_create_groq_agent():
     if st.button("Create the agent") :
         if st.session_state.keyname != "" and st.session_state.key != "" and st.session_state.agentname != "":
             verify = create_an_agent("groq", st.session_state.agentname, st.session_state.key, st.session_state.model)
-            if verify is not None:
+            if verify:
                 st.rerun()
             else :
                 st.warning("An agent with this name already exist")
@@ -60,7 +63,7 @@ def dialog_create_groq_agent():
 def dialog_create_openai_agent():
     keynames = get_key("openaikey")
     if keynames is not None:
-        st.session_state.keyname = selectbox("Choose a key name", keynames)
+        st.session_state.keyname = st.selectbox("Choose a key name", keynames)
         st.session_state.key = keynames[st.session_state.keyname]
     else:
         st.write("You have to add a key")
@@ -96,12 +99,53 @@ def dialog_create_openai_agent():
         else:
             st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
 
+def create_button_agent(agent):
+    with st.container(border=True, height=150):
+        st.write("Your agent : ", agent['agentname'])
+        st.write("Api Base ")
+        if st.button(f"Agent : {agent['agentname']}"):
+            st.session_state.agentname = agent['agentname']
+            st.session_state.apibase = agent['apibase']
+            st.session_state.agentkey = agent['agentkey']
+            st.session_state.agentmodel = agent['agentmodel']
+            st.switch_page("pages/Youragent.py")
+
+# End of functions
+#-------------------------------------------------#
+
 if st.button("Click here to add a Groq agent") :
     dialog_create_groq_agent()
 
 if st.button("Click here to add an OpenAI Agent") :
     dialog_create_openai_agent()
 
+
+
+st.title("Your Own Agents")
+
+# View of all the agents
 dataAgents = get_all_agents()
+i=0
+col1 , col2, col3, col4 = st.columns(4)
 for agent in dataAgents:
-    st.button(agent["agentname"])
+    i +=1
+    # modulo len
+    match i % 4:
+        case 1:
+            with col1:
+                create_button_agent(agent)
+        case 2:
+            with col2:
+                create_button_agent(agent)
+        case 3:
+            with col3:
+                create_button_agent(agent)
+        case 0:
+            with col4:
+                create_button_agent(agent)
+
+
+
+
+
+

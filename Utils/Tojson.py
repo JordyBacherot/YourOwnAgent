@@ -24,10 +24,11 @@ def add_key(apibase, keyname, key):
 
 def create_an_agent(apibase, agentname, agentkey, agentmodel):
     # verify if the file already exist
-    if os.path.exists(f'YourAgents/Agents/{agentname}.json'):
+
+    if os.path.isfile(f'YourAgents/Agents/{agentname}.json'):
         print("This agent already exist")
         return False
-    data = {"agentname" : agentname, "apibase" : apibase, "agentkey" : agentkey, "agentmodel" : agentmodel, "historique" : []}
+    data = {"agentname" : agentname, "apibase" : apibase, "agentkey" : agentkey, "agentmodel" : agentmodel, "historique" : {"1": []}}
     with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
         json.dump(data, file, indent=4)
     return True
