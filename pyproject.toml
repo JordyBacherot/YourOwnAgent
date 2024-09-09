@@ -9,6 +9,9 @@ readme = "README.md"
 python = "^3.12"
 streamlit = "^1.38.0"
 streamlit-extras = "^0.4.7"
+langchain-groq = "^0.1.9"
+langchain-openai = "^0.1.23"
+langchain-core = "^0.2.38"
 
 
 [build-system]

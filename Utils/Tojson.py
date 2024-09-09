@@ -28,7 +28,7 @@ def create_an_agent(apibase, agentname, agentkey, agentmodel):
     if os.path.isfile(f'YourAgents/Agents/{agentname}.json'):
         print("This agent already exist")
         return False
-    data = {"agentname" : agentname, "apibase" : apibase, "agentkey" : agentkey, "agentmodel" : agentmodel, "historique" : {"1": []}}
+    data = {"agentname" : agentname, "apibase" : apibase, "agentkey" : agentkey, "agentmodel" : agentmodel, "historique" : {"1": {"conversation" : [], "context" : "Tu es un chatbot d'assistance à un humain."}}, }
     with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
         json.dump(data, file, indent=4)
     return True
