@@ -1,8 +1,6 @@
 import streamlit as st
-import json
 import sys
 import os
-from streamlit_extras.switch_page_button import switch_page
 
 
 # Ajouter le répertoire parent du projet au sys.path
@@ -108,7 +106,7 @@ def create_button_agent(agent):
             st.session_state.apibase = agent['apibase']
             st.session_state.agentkey = agent['agentkey']
             st.session_state.agentmodel = agent['agentmodel']
-            st.switch_page("pages/Youragent.py")
+            st.switch_page("subpages/Youragent.py")
 
 # End of functions
 #-------------------------------------------------#
