@@ -26,9 +26,8 @@ def create_an_agent(apibase, agentname, agentkey, agentmodel):
     # verify if the file already exist
 
     if os.path.isfile(f'YourAgents/Agents/{agentname}.json'):
-        print("This agent already exist")
         return False
-    data = {"agentname" : agentname, "apibase" : apibase, "agentkey" : agentkey, "agentmodel" : agentmodel, "historique" : {"1": {"conversation" : [], "context" : "Tu es un chatbot d'assistance à un humain."}}}
+    data = {"agentname" : agentname, "apibase" : apibase, "agentkey" : agentkey, "agentmodel" : agentmodel, "conversation" : {"Default Conversation": {"historique" : [], "context" : "Tu es un chatbot d'assistance à un humain."}}}
     with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
         json.dump(data, file, indent=4)
     return True
@@ -46,5 +45,41 @@ def get_all_agents():
 def gethistorique(agentname, nameconversation):
     with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
         data = json.load(file)
-        print(data)
-        return data['historique'][nameconversation]['conversation']
+        return data['conversation'][nameconversation]['historique']
+
+def addtohistorique(agentname, nameconversation, role, content):
+    with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
+        data = json.load(file)
+        data['conversation'][nameconversation]['historique'].append({"role" : role, "content" : content})
+    with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True
+
+def getconversations(agentname):
+    with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
+        data = json.load(file)
+        return data['conversation']
+
+def addconversation(agentname, nameconversation, context):
+    with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
+        data = json.load(file)
+        data['conversation'][nameconversation] = {"historique" : [], "context" : context}
+    with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
+        json.dump(data, file, indent=4)
+
+def getfirstconversation(agentname):
+    with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
+        data = json.load(file)
+        return list(data['conversation'].keys())[0]
+
+def delete_agent(agentname):
+    os.remove(f'YourAgents/Agents/{agentname}.json')
+    return True
+
+def deleteconversation(agentname, nameconversation):
+    with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
+        data = json.load(file)
+        del data['conversation'][nameconversation]
+    with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True

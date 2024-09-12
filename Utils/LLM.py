@@ -1,13 +1,9 @@
 from langchain_core.prompts import ChatPromptTemplate
-from langchain_groq import ChatGroq
-from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
 from langchain_groq import ChatGroq
 from langchain_openai import ChatOpenAI
 
-
-
-def call_llm(apibase, model, key, historique, context):
+def call_llm(message, apibase, model, key, historique, context):
     llm = None
     match apibase :
         case "openai":
@@ -23,9 +19,9 @@ def call_llm(apibase, model, key, historique, context):
                 temperature=0.2,
             )
 
-    template = """"
+    template = """
     Conversation précédente:
-    {conversation}
+    {historique}
     
     Nouveau message humain : 
     {message}
@@ -44,9 +40,8 @@ def call_llm(apibase, model, key, historique, context):
     chain = promptTemplate | llm | StrOutputParser()
     response = chain.invoke(
         {
-            "conversation": historique,
-            "message": context,
+            "historique": historique,
+            "message": message,
         }
     )
-
     return response
