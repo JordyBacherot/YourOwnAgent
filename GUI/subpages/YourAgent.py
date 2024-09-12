@@ -7,7 +7,8 @@ import sys
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 # Importer la fonction depuis ToJson.py
-from Utils.Tojson import gethistorique, addtohistorique, getconversations, addconversation, getfirstconversation
+from Utils.Tojson import gethistorique, addtohistorique, getconversations, addconversation, getfirstconversation, \
+    deleteconversation
 from Utils.LLM import call_llm
 
 @st.dialog("Add a conversation")
@@ -62,9 +63,15 @@ with st.sidebar:
     st.header("Your conversation histories")
     conversations = getconversations(st.session_state.agentname)
     for conversation in conversations:
-        if st.button(conversation):
-            st.session_state.nameconversation = conversation
-            st.session_state.historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
+        with st.container(height=100):
+            if st.button(f"Go to {conversation}"):
+                st.session_state.nameconversation = conversation
+                st.session_state.historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
+            if st.button(f"Delete {conversation}"):
+                deleteconversation(st.session_state.agentname, conversation)
+                st.session_state.nameconversation = getfirstconversation(st.session_state.agentname)
+                st.session_state.historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
+                st.rerun()
     if st.button("Add a conversation"):
         dialogtoaddconversation()
 

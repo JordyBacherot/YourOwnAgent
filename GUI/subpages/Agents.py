@@ -7,7 +7,8 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 # Importer la fonction depuis ToJson.py
-from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents
+from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent
+
 
 # Functions
 #-------------------------------------------------#
@@ -97,8 +98,17 @@ def dialog_create_openai_agent():
         else:
             st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
 
+@st.dialog("Create an agent with OpenAI")
+def confirm_delete_agent(agentname):
+    st.write("Are you sure you want to delete this agent ?")
+    if st.button("Yes"):
+        delete_agent(agentname)
+        st.rerun()
+    if st.button("No"):
+        st.rerun()
+
 def create_button_agent(agent):
-    with st.container(border=True, height=150):
+    with st.container(border=True, height=250):
         st.write("Your agent : ", agent['agentname'])
         st.write("Api Base ")
         if st.button(f"Agent : {agent['agentname']}"):
@@ -107,6 +117,8 @@ def create_button_agent(agent):
             st.session_state.agentkey = agent['agentkey']
             st.session_state.agentmodel = agent['agentmodel']
             st.switch_page("subpages/Youragent.py")
+        if st.button(f"Delete this agent {agent['agentname']}"):
+            confirm_delete_agent(agent['agentname'])
 
 # End of functions
 #-------------------------------------------------#
@@ -124,23 +136,21 @@ st.title("Your Own Agents")
 # View of all the agents
 dataAgents = get_all_agents()
 i=0
-col1 , col2, col3, col4 = st.columns(4)
+col1 , col2, col3 = st.columns(3)
 for agent in dataAgents:
     i +=1
     # modulo len
-    match i % 4:
+    match i % 3:
         case 1:
             with col1:
                 create_button_agent(agent)
         case 2:
             with col2:
                 create_button_agent(agent)
-        case 3:
+        case 0:
             with col3:
                 create_button_agent(agent)
-        case 0:
-            with col4:
-                create_button_agent(agent)
+
 
 
 
