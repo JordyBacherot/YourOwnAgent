@@ -66,18 +66,19 @@ def dialog_create_openai_agent():
         st.session_state.key = keynames[st.session_state.keyname]
     else:
         st.write("You have to add a key")
+    st.button("Refresh the keys")
     st.divider()
-    st.write("If you want to add a key :")
+    st.write("Here, between lines, you can add a key if you want :")
     st.session_state.newkeyname = st.text_input("Please enter your name key")
     st.session_state.newkey = st.text_input("Please enter your key")
-    if st.button("Add the key") :
+    if st.button("Add the key"):
         verify = add_key("openaikey", st.session_state.newkeyname, st.session_state.newkey)
         if not verify:
             st.write("This key name already exist")
-        else :
+        else:
             st.write("The key has been added")
-    if st.button("Where can I find my key ?") :
-        st.info("You have to create an account on the website Groq and go to the API section to get your key")
+    if st.button("Where can I find my key ?"):
+        st.info("You must have a premium account on OpenAI Website to get your key, after that you can go to the API section to get your key")
     st.divider()
     model_ids = [
         "gpt-4o",
@@ -96,9 +97,13 @@ def dialog_create_openai_agent():
             else:
                 st.warning("An agent with this name already exist")
         else:
+            st.write("Key name : ", st.session_state.keyname)
+            st.write("Key : ", st.session_state.key)
+            st.write("Agent name : ", st.session_state.agentname)
+            st.write("Model : ", st.session_state.model)
             st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
 
-@st.dialog("Create an agent with OpenAI")
+@st.dialog("Delete an agent")
 def confirm_delete_agent(agentname):
     st.write("Are you sure you want to delete this agent ?")
     if st.button("Yes"):
