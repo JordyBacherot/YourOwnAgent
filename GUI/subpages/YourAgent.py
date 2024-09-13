@@ -8,7 +8,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 
 # Importer la fonction depuis ToJson.py
 from Utils.Tojson import gethistorique, addtohistorique, getconversations, addconversation, getfirstconversation, \
-    deleteconversation
+    deleteconversation, get_context, set_context
 from Utils.LLM import call_llm, download_model_ollama
 
 @st.dialog("Add a conversation")
@@ -86,7 +86,13 @@ st.header(f"Model : {st.session_state.agentmodel}")
 if 'nameconversation' not in st.session_state:
     st.session_state.nameconversation = getfirstconversation(st.session_state.agentname)
 
-st.session_state.context = "Tu es un assistant d'aide"
+st.session_state.context = get_context(st.session_state.agentname, st.session_state.nameconversation)
+st.session_state.newcontext = st.text_area(label = "Context Window (permit to give to LLM a context for the conversation) ", value = st.session_state.context)
+if st.button("Update the context"):
+    set_context(st.session_state.agentname, st.session_state.nameconversation, st.session_state.newcontext)
+    st.rerun()
+
+
 historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
 with st.container(border=True, height=800):
     generate_chat()

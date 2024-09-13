@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 # Importer la fonction depuis ToJson.py
-from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent
+from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent, get_keys, delete_key
 
 
 # Functions
@@ -156,8 +156,25 @@ def create_button_agent(agent):
         if st.button(f"Delete this agent {agent['agentname']}"):
             confirm_delete_agent(agent['agentname'])
 
+@st.dialog("Delete an key")
+def dialogue_delete_key():
+    keys = get_keys()
+    if keys is not None:
+        st.session_state.deletekeyname = st.selectbox("Choose a key name", keys)
+    else:
+        st.write("You don't have any key")
+        st.rerun()
+    if st.button("Delete the key"):
+        delete_key(st.session_state.deletekeyname)
+        st.rerun()
+
+
+
 # End of functions
 #-------------------------------------------------#
+
+if st.button("Click here to delete a key") :
+    dialogue_delete_key()
 
 if st.button("Click here to add a Groq agent") :
     dialog_create_groq_agent()

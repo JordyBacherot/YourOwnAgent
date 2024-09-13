@@ -11,6 +11,26 @@ def get_key(apibase):
         else:
             return None
 
+def get_keys():
+    with open('YourAgents/yourkeys.json', 'r') as file:
+        data = json.load(file)
+    tab_keys=[]
+    for base in data:
+        for key in data[base]:
+            print(key)
+            tab_keys.append(key)
+    return tab_keys
+
+def delete_key(keyname):
+    with open('YourAgents/yourkeys.json', 'r') as file:
+        data = json.load(file)
+        for base in data:
+            if keyname in data[base]:
+                del data[base][keyname]
+    with open('YourAgents/yourkeys.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True
+
 def add_key(apibase, keyname, key):
     with open('YourAgents/yourkeys.json', 'r') as file:
         data = json.load(file)
@@ -83,6 +103,19 @@ def deleteconversation(agentname, nameconversation):
     with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
         data = json.load(file)
         del data['conversation'][nameconversation]
+    with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True
+
+def get_context(agentname, nameconversation):
+    with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
+        data = json.load(file)
+        return data['conversation'][nameconversation]['context']
+
+def set_context(agentname, nameconversation, context):
+    with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
+        data = json.load(file)
+        data['conversation'][nameconversation]['context'] = context
     with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
         json.dump(data, file, indent=4)
     return True
