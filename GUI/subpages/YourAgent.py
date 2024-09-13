@@ -53,7 +53,7 @@ def generate_chat():
                 download_model_ollama(st.session_state.agentmodel)
         elif response == "An error occured in the call of the LLM":
             st.warning("An error occured in the call of the LLM")
-        else :
+        elif response is str:
             addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "assistant", response)
         st.rerun()
 
@@ -71,6 +71,7 @@ with st.sidebar:
             if st.button(f"Go to {conversation}"):
                 st.session_state.nameconversation = conversation
                 st.session_state.historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
+                st.rerun()
             if st.button(f"Delete {conversation}"):
                 deleteconversation(st.session_state.agentname, conversation)
                 st.session_state.nameconversation = getfirstconversation(st.session_state.agentname)

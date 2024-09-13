@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 # Importer la fonction depuis ToJson.py
-from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent, get_keys, delete_key
+from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent, get_keys, delete_key, getfirstconversation
 
 
 # Functions
@@ -152,6 +152,9 @@ def create_button_agent(agent):
             st.session_state.agentname = agent['agentname']
             st.session_state.apibase = agent['apibase']
             st.session_state.agentmodel = agent['agentmodel']
+            if agent['apibase'] != "ollama":
+                st.session_state.agentkey = agent['agentkey']
+            st.session_state.nameconversation = getfirstconversation(st.session_state.agentname)
             st.switch_page("subpages/Youragent.py")
         if st.button(f"Delete this agent {agent['agentname']}"):
             confirm_delete_agent(agent['agentname'])
