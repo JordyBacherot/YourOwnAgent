@@ -45,7 +45,7 @@ def dialog_create_groq_agent():
     st.session_state.agentname = st.text_input("Please enter the name of your agent")
     if st.button("Create the agent") :
         if st.session_state.keyname != "" and st.session_state.key != "" and st.session_state.agentname != "":
-            verify = create_an_agent("groq", st.session_state.agentname, st.session_state.key, st.session_state.model)
+            verify = create_an_agent("groq", st.session_state.agentname, st.session_state.model, st.session_state.key)
             if verify:
                 st.rerun()
             else :
@@ -91,7 +91,7 @@ def dialog_create_openai_agent():
     st.session_state.agentname = st.text_input("Please enter the name of your agent")
     if st.button("Create the agent"):
         if st.session_state.keyname != "" and st.session_state.key != "" and st.session_state.agentname != "":
-            verify = create_an_agent("openai", st.session_state.agentname, st.session_state.key, st.session_state.model)
+            verify = create_an_agent("openai", st.session_state.agentname, st.session_state.model, st.session_state.key)
             if verify:
                 st.rerun()
             else:
@@ -99,6 +99,38 @@ def dialog_create_openai_agent():
         else:
             st.write("Key name : ", st.session_state.keyname)
             st.write("Key : ", st.session_state.key)
+            st.write("Agent name : ", st.session_state.agentname)
+            st.write("Model : ", st.session_state.model)
+            st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
+
+@st.dialog("Create an agent with Ollama")
+def dialog_create_ollama_agent():
+    st.warning("Be sure to have follow the tutorial, and have installed Ollama on your computer")
+    st.divider()
+    st.write("You don't need a key to use Ollama, because it's locally installed")
+    st.divider()
+    st.write("Be careful, models of 8b are heavy (4go), be sure to have a good computer")
+    st.write("Be careful, models of 70b are really heavy (50go), be sure to have a strong computer")
+    model_ids = [
+        "llama3.1:8b",
+        "llama3.1:70b",
+        "gemma2:2b",
+        "gemma2:9b",
+        "mistral-nemo:12b",
+        "qwen2:7b",
+        "qwen2:1.5b"
+    ]
+    st.session_state.model = st.selectbox("Please enter the model you want to use", model_ids)
+    st.session_state.agentname = st.text_input("Please enter the name of your agent")
+    if st.button("Create the agent") :
+        if  st.session_state.agentname != "":
+            verify = create_an_agent("ollama", st.session_state.agentname, st.session_state.model)
+            if verify:
+                st.rerun()
+            else :
+                st.warning("An agent with this name already exist")
+        else :
+            st.write("Key name : ", st.session_state.keyname)
             st.write("Agent name : ", st.session_state.agentname)
             st.write("Model : ", st.session_state.model)
             st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
@@ -119,7 +151,6 @@ def create_button_agent(agent):
         if st.button(f"Agent : {agent['agentname']}"):
             st.session_state.agentname = agent['agentname']
             st.session_state.apibase = agent['apibase']
-            st.session_state.agentkey = agent['agentkey']
             st.session_state.agentmodel = agent['agentmodel']
             st.switch_page("subpages/Youragent.py")
         if st.button(f"Delete this agent {agent['agentname']}"):
@@ -134,9 +165,11 @@ if st.button("Click here to add a Groq agent") :
 if st.button("Click here to add an OpenAI Agent") :
     dialog_create_openai_agent()
 
-
+if st.button("Click here to add an Ollama Agent") :
+    dialog_create_ollama_agent()
 
 st.title("Your Own Agents")
+
 
 # View of all the agents
 dataAgents = get_all_agents()

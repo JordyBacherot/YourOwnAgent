@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 # Importer la fonction depuis ToJson.py
 from Utils.Tojson import gethistorique, addtohistorique, getconversations, addconversation, getfirstconversation, \
     deleteconversation
-from Utils.LLM import call_llm
+from Utils.LLM import call_llm, download_model_ollama
 
 @st.dialog("Add a conversation")
 def dialogtoaddconversation():
@@ -42,15 +42,19 @@ def generate_chat():
     # React to user input
     if message := st.chat_input("Intervention de l'Animateur :"):
         # Add user message to chat historique
-        print(historique)
         addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "human", message)
-        try :
-            response = call_llm(message, st.session_state.apibase, st.session_state.agentmodel, st.session_state.agentkey, historique, st.session_state.context)
+        if st.session_state.apibase == "ollama" :
+            response = call_llm(message, st.session_state.apibase, st.session_state.agentmodel, historique, st.session_state.context)
+        else :
+            response = call_llm(message, st.session_state.apibase, st.session_state.agentmodel, historique, st.session_state.context, st.session_state.agentkey)
+        if response == "The model you are trying is not downloaded, start of the download":
+            st.warning("The model you are trying is not downloaded, start of the download")
+            with st.spinner("The model is downloading, it can be long, depending on your connection speed"):
+                download_model_ollama(st.session_state.agentmodel)
+        elif response == "An error occured in the call of the LLM":
+            st.warning("An error occured in the call of the LLM")
+        else :
             addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "assistant", response)
-        except Exception as error:
-            st.warning("Error in the call of LLM")
-            print(error)
-
         st.rerun()
 
 if 'agentname' not in st.session_state:

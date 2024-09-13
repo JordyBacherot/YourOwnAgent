@@ -2,5 +2,10 @@
     "groqkey": {
         "GroqKey": "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"
     },
-    "openaikey": {}
+    "openaikey": {
+
+    },
+    "ollamakey": {
+
+    }
 }
