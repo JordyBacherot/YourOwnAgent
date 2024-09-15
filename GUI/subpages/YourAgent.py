@@ -53,7 +53,7 @@ def generate_chat():
                 download_model_ollama(st.session_state.agentmodel)
         elif response == "An error occured in the call of the LLM":
             st.warning("An error occured in the call of the LLM")
-        elif response is str:
+        else :
             addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "assistant", response)
         st.rerun()
 

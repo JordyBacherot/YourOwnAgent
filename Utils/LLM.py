@@ -47,7 +47,7 @@ def call_llm(message, apibase, model, historique, context, key=None):
 
     chain = promptTemplate | llm | StrOutputParser()
     try :
-        response = chain.stream(
+        response = chain.invoke(
             {
                 "historique": historique,
                 "message": message,
