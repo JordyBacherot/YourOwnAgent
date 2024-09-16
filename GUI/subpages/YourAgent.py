@@ -32,12 +32,7 @@ def generate_chat():
     i = 0
     for elmt in historique:
         with (st.chat_message(elmt["role"])):
-            if elmt == historique[long - 1] and type(elmt["content"]) != str:
-                content = st.write_stream(elmt["content"])
-                elmt["content"] = content + "\n"
-                st.session_state.audiopath.append("")
-            else:
-                st.write('<p>' + elmt["content"] + '</p>', unsafe_allow_html=True)
+            st.write(elmt["content"])
             i += 1
     # React to user input
     if message := st.chat_input("Intervention de l'Animateur :"):
