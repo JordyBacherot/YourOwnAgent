@@ -11,6 +11,11 @@ from Utils.Tojson import gethistorique, addtohistorique, getconversations, addco
     deleteconversation, get_context, set_context
 from Utils.LLM import call_llm, download_model_ollama
 
+
+
+# Functions
+#-------------------------------------------------#
+
 @st.dialog("Add a conversation")
 def dialogtoaddconversation():
     st.session_state.newconversationname = st.text_input("Please enter the name of the conversation")
@@ -57,6 +62,12 @@ def generate_chat_stream():
         else:
             st.session_state.save_reply = response
         st.rerun()
+
+# End of functions
+#-------------------------------------------------#
+
+st.title("🤖 Your Own Agent")
+st.header("Your Agents")
 
 if 'agentname' not in st.session_state:
     st.header("You don't have an agent in charge")

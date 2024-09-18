@@ -11,7 +11,11 @@ pages = {
     ],
 }
 
-st.set_page_config(layout="wide")
+st.set_page_config(
+    page_title="Your Own Agent",
+    page_icon="🤖",
+    layout="wide",
+)
 
 pg = st.navigation(pages)
 pg.run()

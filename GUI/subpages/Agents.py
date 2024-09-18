@@ -177,6 +177,9 @@ def dialogue_delete_key():
 # End of functions
 #-------------------------------------------------#
 
+st.title("🤖 Your Own Agent")
+st.header("Agents")
+
 if st.button("Click here to delete a key") :
     dialogue_delete_key()
 
