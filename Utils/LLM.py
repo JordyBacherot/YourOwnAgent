@@ -8,6 +8,9 @@ import ollama
 import streamlit as st
 
 def call_llm(message, apibase, model, historique, context, key=None):
+
+    historique.append({"role": "human", "content": message})
+
     llm = None
     match apibase :
         case "openai":
@@ -49,7 +52,7 @@ def call_llm(message, apibase, model, historique, context, key=None):
 
     chain = promptTemplate | llm | StrOutputParser()
     try :
-        response = chain.invoke(
+        response = chain.stream(
             {
                 "historique": historique,
                 "message": message,
@@ -61,6 +64,7 @@ def call_llm(message, apibase, model, historique, context, key=None):
             response = "The model you are trying is not downloaded, start of the download"
         else :
             response = "An error occured in the call of the LLM"
+    historique.append({"role": "assistant", "content": response})
     return response
 
 def download_model_ollama(model):

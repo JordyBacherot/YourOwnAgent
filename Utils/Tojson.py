@@ -48,7 +48,7 @@ def create_an_agent(apibase, agentname, agentmodel, agentkey=None):
     if os.path.isfile(f'YourAgents/Agents/{agentname}.json'):
         return False
     if agentkey is None:
-        data = {"agentname": agentname, "apibase": apibase, "agentmodel": agentmodel, "conversation": {"Default Conversation": {"historique": [], "context": "Tu es un chatbot d'assistance à un humain."}}}
+        data = {"agentname": agentname, "apibase": apibase, "agentmodel": agentmodel, "conversation": {"Default Conversation": {"historique": [], "context": "Réponds en Français. Tu es un chatbot d'assistance à un humain."}}}
     else :
         data = {"agentname" : agentname, "apibase" : apibase, "agentkey" : agentkey, "agentmodel" : agentmodel, "conversation" : {"Default Conversation": {"historique" : [], "context" : "Tu es un chatbot d'assistance à un humain."}}}
     with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:

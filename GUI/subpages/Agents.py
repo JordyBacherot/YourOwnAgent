@@ -7,7 +7,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 # Importer la fonction depuis ToJson.py
-from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent, get_keys, delete_key, getfirstconversation
+from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent, get_keys, delete_key, getfirstconversation, gethistorique
 
 
 # Functions
@@ -113,12 +113,12 @@ def dialog_create_ollama_agent():
     st.write("Be careful, models of 70b are really heavy (50go), be sure to have a strong computer")
     model_ids = [
         "llama3.1:8b",
-        "llama3.1:70b",
         "gemma2:2b",
         "gemma2:9b",
         "mistral-nemo:12b",
         "qwen2:7b",
-        "qwen2:1.5b"
+        "qwen2:1.5b",
+        "llama3.1:70b",
     ]
     st.session_state.model = st.selectbox("Please enter the model you want to use", model_ids)
     st.session_state.agentname = st.text_input("Please enter the name of your agent")
@@ -155,6 +155,7 @@ def create_button_agent(agent):
             if agent['apibase'] != "ollama":
                 st.session_state.agentkey = agent['agentkey']
             st.session_state.nameconversation = getfirstconversation(st.session_state.agentname)
+            st.session_state.historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
             st.switch_page("subpages/Youragent.py")
         if st.button(f"Delete this agent {agent['agentname']}"):
             confirm_delete_agent(agent['agentname'])

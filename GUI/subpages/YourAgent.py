@@ -14,7 +14,7 @@ from Utils.LLM import call_llm, download_model_ollama
 @st.dialog("Add a conversation")
 def dialogtoaddconversation():
     st.session_state.newconversationname = st.text_input("Please enter the name of the conversation")
-    st.session_state.newcontext = st.text_area("Please enter the context of the conversation", value = "Tu es un chatbot d'assistance à un humain.")
+    st.session_state.newcontext = st.text_area("Please enter the context of the conversation", value = "Réponds en Français. Tu es un chatbot d'assistance à un humain.")
     if st.button("Add the conversation") and st.session_state.newconversationname != "" and st.session_state.newcontext != "":
         addconversation(st.session_state.agentname, st.session_state.newconversationname, st.session_state.newcontext)
         st.session_state.nameconversation = st.session_state.newconversationname
@@ -23,33 +23,39 @@ def dialogtoaddconversation():
     else :
         st.warning("Please fill the name of the conversation and the context")
 
-
-
-
-def generate_chat():
-    # Display chat messages from history on app rerun
-    long = len(historique)
+def generate_chat_stream():
+    # Display chat messages from historique on app
+    long = len(st.session_state.historique)
     i = 0
-    for elmt in historique:
+    for elmt in st.session_state.historique:
         with (st.chat_message(elmt["role"])):
-            st.write(elmt["content"])
-            i += 1
+                if elmt == st.session_state.historique[long - 1] and type(elmt["content"]) != str:
+                    content = st.write_stream(elmt["content"])
+                    elmt["content"] = content + "\n"
+                    addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "assistant",
+                                    elmt["content"])
+                else:
+                    st.write('<p>' + elmt["content"] + '</p>', unsafe_allow_html=True)
+                c1, c2 = st.columns([2,1])
+                i += 1
     # React to user input
     if message := st.chat_input("Intervention de l'Animateur :"):
         # Add user message to chat historique
         addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "human", message)
-        if st.session_state.apibase == "ollama" :
-            response = call_llm(message, st.session_state.apibase, st.session_state.agentmodel, historique, st.session_state.context)
-        else :
-            response = call_llm(message, st.session_state.apibase, st.session_state.agentmodel, historique, st.session_state.context, st.session_state.agentkey)
+        if st.session_state.apibase == "ollama":
+            response = call_llm(message, st.session_state.apibase, st.session_state.agentmodel, st.session_state.historique,
+                                st.session_state.context)
+        else:
+            response = call_llm(message, st.session_state.apibase, st.session_state.agentmodel, st.session_state.historique,
+                                st.session_state.context, st.session_state.agentkey)
         if response == "The model you are trying is not downloaded, start of the download":
             st.warning("The model you are trying is not downloaded, start of the download")
             with st.spinner("The model is downloading, it can be long, depending on your connection speed"):
                 download_model_ollama(st.session_state.agentmodel)
         elif response == "An error occured in the call of the LLM":
             st.warning("An error occured in the call of the LLM")
-        else :
-            addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "assistant", response)
+        else:
+            st.session_state.save_reply = response
         st.rerun()
 
 if 'agentname' not in st.session_state:
@@ -88,10 +94,9 @@ if st.button("Update the context"):
     set_context(st.session_state.agentname, st.session_state.nameconversation, st.session_state.newcontext)
     st.rerun()
 
-
-historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
 with st.container(border=True, height=800):
-    generate_chat()
+    generate_chat_stream()
+
 
 
 
