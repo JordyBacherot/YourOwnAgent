@@ -2,6 +2,8 @@ import streamlit as st
 import sys
 import os
 
+from streamlit_extras.customize_running import center_css
+from streamlit_extras.stylable_container import stylable_container
 
 # Ajouter le répertoire parent du projet au sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
@@ -13,6 +15,42 @@ from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, dele
 # Functions
 #-------------------------------------------------#
 
+@st.dialog("Add a key")
+def dialog_create_key():
+    model_ids = [
+        "groq",
+        "openai",
+    ]
+    st.session_state.newapibase = st.selectbox("Please enter the api base of your key", model_ids)
+    st.session_state.newkeyname = st.text_input("Please enter your name key")
+    st.session_state.newkey = st.text_input("Please enter your key")
+    with stylable_container(
+            "add_key",
+            css_styles="""
+                        button {
+                            color:  #84996a;
+                            border: 2px solid #9CB380;
+                            height: 60px;
+                        }""",
+    ):
+        if st.button("Add the key", use_container_width=True):
+            verify = add_key(st.session_state.newapibase, st.session_state.newkeyname, st.session_state.newkey)
+            if not verify:
+                st.write("This key name already exist")
+            else:
+                st.write("The key has been added")
+    with stylable_container(
+            "info",
+            css_styles="""
+                            button {
+                                color:  #6483cc;
+                                border: 2px solid #6483cc;
+                                height: 60px;
+                            }""",
+    ):
+        if st.button("Where can I find my key ?", use_container_width=True):
+            st.info("You have to create an account on the website Groq or OpenAI (not free) and go to the API section to get your key")
+
 @st.dialog("Create an agent with Groq")
 def dialog_create_groq_agent():
     keynames = get_key("groqkey")
@@ -20,21 +58,32 @@ def dialog_create_groq_agent():
         st.session_state.keyname = st.selectbox("Choose a key name", keynames)
         st.session_state.key = keynames[st.session_state.keyname]
     else :
-        st.write("You have to add a key")
-    st.button("Refresh the keys")
-    st.divider()
-    st.write("If you want to add a key :")
-    st.session_state.newkeyname = st.text_input("Please enter your name key")
-    st.session_state.newkey = st.text_input("Please enter your key")
-    if st.button("Add the key") :
-        verify = add_key("groqkey", st.session_state.newkeyname, st.session_state.newkey)
-        if not verify:
-            st.write("This key name already exist")
-        else :
-            st.write("The key has been added")
-    if st.button("Where can I find my key ?") :
-        st.info("You have to create an account on the website Groq and go to the API section to get your key")
-    st.divider()
+        st.info("You have to add a key")
+    cola, colb = st.columns([1, 1])
+    with cola :
+        with stylable_container(
+                "refresh",
+                css_styles="""
+                                button {
+                                    color: #d68622;
+                                    height: 40px;
+                                    border: 2px solid #d68622;
+                                }""",
+        ):
+            st.button("Refresh the keys", use_container_width=True)
+    with colb :
+        with stylable_container(
+                "addakey",
+                css_styles="""
+                                button {
+                                    color:  #84996a;
+                                    border: 2px solid #9CB380;
+                                    height: 40px;
+                                }""",
+        ):
+            if st.button("Add a key", use_container_width=True):
+                st.session_state.start_dialogue_key = True
+                st.rerun()
     model_ids = [
         "gemma2-9b-it",
         "llama3-70b-8192",
@@ -43,19 +92,28 @@ def dialog_create_groq_agent():
     ]
     st.session_state.model = st.selectbox("Please enter the model you want to use", model_ids)
     st.session_state.agentname = st.text_input("Please enter the name of your agent")
-    if st.button("Create the agent") :
-        if st.session_state.keyname != "" and st.session_state.key != "" and st.session_state.agentname != "":
-            verify = create_an_agent("groq", st.session_state.agentname, st.session_state.model, st.session_state.key)
-            if verify:
-                st.rerun()
+    with stylable_container(
+            "addakey",
+            css_styles="""
+                button {
+                    color:  #84996a;
+                    border: 2px solid #9CB380;
+                    height: 40px;
+                }""",
+    ):
+        if st.button("Create the agent", use_container_width=True):
+            if st.session_state.keyname != "" and st.session_state.key != "" and st.session_state.agentname != "":
+                verify = create_an_agent("groq", st.session_state.agentname, st.session_state.model, st.session_state.key)
+                if verify:
+                    st.rerun()
+                else :
+                    st.warning("An agent with this name already exist")
             else :
-                st.warning("An agent with this name already exist")
-        else :
-            st.write("Key name : ", st.session_state.keyname)
-            st.write("Key : ", st.session_state.key)
-            st.write("Agent name : ", st.session_state.agentname)
-            st.write("Model : ", st.session_state.model)
-            st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
+                st.write("Key name : ", st.session_state.keyname)
+                st.write("Key : ", st.session_state.key)
+                st.write("Agent name : ", st.session_state.agentname)
+                st.write("Model : ", st.session_state.model)
+                st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
 
 
 @st.dialog("Create an agent with OpenAI")
@@ -65,21 +123,32 @@ def dialog_create_openai_agent():
         st.session_state.keyname = st.selectbox("Choose a key name", keynames)
         st.session_state.key = keynames[st.session_state.keyname]
     else:
-        st.write("You have to add a key")
-    st.button("Refresh the keys")
-    st.divider()
-    st.write("Here, between lines, you can add a key if you want :")
-    st.session_state.newkeyname = st.text_input("Please enter your name key")
-    st.session_state.newkey = st.text_input("Please enter your key")
-    if st.button("Add the key"):
-        verify = add_key("openaikey", st.session_state.newkeyname, st.session_state.newkey)
-        if not verify:
-            st.write("This key name already exist")
-        else:
-            st.write("The key has been added")
-    if st.button("Where can I find my key ?"):
-        st.info("You must have a premium account on OpenAI Website to get your key, after that you can go to the API section to get your key")
-    st.divider()
+        st.info("You have to add a key")
+    cola, colb = st.columns([1, 1])
+    with cola:
+        with stylable_container(
+                "refresh",
+                css_styles="""
+                                        button {
+                                            color: #d68622;
+                                            height: 40px;
+                                            border: 2px solid #d68622;
+                                        }""",
+        ):
+            st.button("Refresh the keys", use_container_width=True)
+    with colb:
+        with stylable_container(
+                "addakey",
+                css_styles="""
+                                        button {
+                                            color:  #84996a;
+                                            border: 2px solid #9CB380;
+                                            height: 40px;
+                                        }""",
+        ):
+            if st.button("Add a key", use_container_width=True):
+                st.session_state.start_dialogue_key = True
+                st.rerun()
     model_ids = [
         "gpt-4o",
         "gpt-4o-turbo",
@@ -89,19 +158,28 @@ def dialog_create_openai_agent():
     ]
     st.session_state.model = st.selectbox("Please enter the model you want to use", model_ids)
     st.session_state.agentname = st.text_input("Please enter the name of your agent")
-    if st.button("Create the agent"):
-        if st.session_state.keyname != "" and st.session_state.key != "" and st.session_state.agentname != "":
-            verify = create_an_agent("openai", st.session_state.agentname, st.session_state.model, st.session_state.key)
-            if verify:
-                st.rerun()
+    with stylable_container(
+            "addakey",
+            css_styles="""
+                    button {
+                        color:  #84996a;
+                        border: 2px solid #9CB380;
+                        height: 40px;
+                    }""",
+    ):
+        if st.button("Create the agent", use_container_width=True):
+            if st.session_state.keyname != "" and st.session_state.key != "" and st.session_state.agentname != "":
+                verify = create_an_agent("openai", st.session_state.agentname, st.session_state.model, st.session_state.key)
+                if verify:
+                    st.rerun()
+                else:
+                    st.warning("An agent with this name already exist")
             else:
-                st.warning("An agent with this name already exist")
-        else:
-            st.write("Key name : ", st.session_state.keyname)
-            st.write("Key : ", st.session_state.key)
-            st.write("Agent name : ", st.session_state.agentname)
-            st.write("Model : ", st.session_state.model)
-            st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
+                st.write("Key name : ", st.session_state.keyname)
+                st.write("Key : ", st.session_state.key)
+                st.write("Agent name : ", st.session_state.agentname)
+                st.write("Model : ", st.session_state.model)
+                st.warning("Please fill all the fields : Key Name, Key, Model and Agent name")
 
 @st.dialog("Create an agent with Ollama")
 def dialog_create_ollama_agent():
@@ -145,22 +223,41 @@ def confirm_delete_agent(agentname):
         st.rerun()
 
 def create_button_agent(agent):
-    with st.container(border=True, height=250):
-        st.write("Your agent : ", agent['agentname'])
-        st.write("Api Base ")
-        if st.button(f"Agent : {agent['agentname']}"):
-            st.session_state.agentname = agent['agentname']
-            st.session_state.apibase = agent['apibase']
-            st.session_state.agentmodel = agent['agentmodel']
-            if agent['apibase'] != "ollama":
-                st.session_state.agentkey = agent['agentkey']
-            st.session_state.nameconversation = getfirstconversation(st.session_state.agentname)
-            st.session_state.historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
-            st.switch_page("subpages/Youragent.py")
-        if st.button(f"Delete this agent {agent['agentname']}"):
-            confirm_delete_agent(agent['agentname'])
+    with st.container(border=True, height=270):
+        st.write(r"$\textsf{\Large "+agent['agentname']+"}$")
+        st.write(r"$\textsf{Api Base : "+ agent['apibase']+"}$")
+        st.write(r"$\textsf{Model : "+ agent['agentmodel']+"}$")
+        with stylable_container(
+                "go_to_agent",
+                css_styles="""
+                    button {
+                        color: #d68622;
+                        height: 50px;
+                        border: 2px solid #d68622;
+                    }""",
+        ):
+            if st.button(f"Go to Agent : {agent['agentname']}", use_container_width=True):
+                st.session_state.agentname = agent['agentname']
+                st.session_state.apibase = agent['apibase']
+                st.session_state.agentmodel = agent['agentmodel']
+                if agent['apibase'] != "ollama":
+                    st.session_state.agentkey = agent['agentkey']
+                st.session_state.nameconversation = getfirstconversation(st.session_state.agentname)
+                st.session_state.historique = gethistorique(st.session_state.agentname, st.session_state.nameconversation)
+                st.switch_page("subpages/Youragent.py")
+        with stylable_container(
+                "delete_agent",
+                css_styles="""
+                            button {
+                                color: #b0362e;
+                                border: 2px solid #b0362e;
+                                height: 30px;
+                            }""",
+        ):
+            if st.button(f"Delete {agent['agentname']}", use_container_width=True):
+                confirm_delete_agent(agent['agentname'])
 
-@st.dialog("Delete an key")
+@st.dialog("Delete a key")
 def dialogue_delete_key():
     keys = get_keys()
     if keys is not None:
@@ -168,9 +265,18 @@ def dialogue_delete_key():
     else:
         st.write("You don't have any key")
         st.rerun()
-    if st.button("Delete the key"):
-        delete_key(st.session_state.deletekeyname)
-        st.rerun()
+    with stylable_container(
+            "delete_agent",
+            css_styles="""
+                                button {
+                                    color: #b0362e;
+                                    border: 2px solid #b0362e;
+                                    height: 30px;
+                                }""",
+    ):
+        if st.button("Delete the key", use_container_width=True):
+            delete_key(st.session_state.deletekeyname)
+            st.rerun()
 
 
 
@@ -178,40 +284,72 @@ def dialogue_delete_key():
 #-------------------------------------------------#
 
 st.title("🤖 Your Own Agent")
-st.header("Agents")
+st.header("Your Own Agents", divider="orange")
 
-if st.button("Click here to delete a key") :
-    dialogue_delete_key()
+if "start_dialogue_key" not in st.session_state:
+    st.session_state.start_dialogue_key = False
 
-if st.button("Click here to add a Groq agent") :
-    dialog_create_groq_agent()
-
-if st.button("Click here to add an OpenAI Agent") :
-    dialog_create_openai_agent()
-
-if st.button("Click here to add an Ollama Agent") :
-    dialog_create_ollama_agent()
-
-st.title("Your Own Agents")
+if st.session_state.start_dialogue_key == True:
+    st.session_state.start_dialogue_key = False
+    dialog_create_key()
 
 
-# View of all the agents
-dataAgents = get_all_agents()
-i=0
-col1 , col2, col3 = st.columns(3)
-for agent in dataAgents:
-    i +=1
-    # modulo len
-    match i % 3:
-        case 1:
-            with col1:
-                create_button_agent(agent)
-        case 2:
-            with col2:
-                create_button_agent(agent)
-        case 0:
-            with col3:
-                create_button_agent(agent)
+c1, c2, c3 = st.columns([10, 1, 4])
+
+with c3 :
+    st.write("")
+    st.subheader("Manage")
+    with st.container(border=True):
+        with stylable_container(
+                "add",
+                css_styles="""
+                    button {
+                        color:  #84996a;
+                        border: 2px solid #9CB380;
+                        height: 60px;
+                    }""",
+        ):
+            if st.button("Add a Groq agent", use_container_width=True):
+                dialog_create_groq_agent()
+
+            if st.button("Add an OpenAI Agent", use_container_width=True):
+                dialog_create_openai_agent()
+
+            if st.button("Add an Ollama Agent", use_container_width=True):
+                dialog_create_ollama_agent()
+        with stylable_container(
+                "delete",
+                css_styles="""
+                    button {
+                        color: #b0362e;
+                        border: 2px solid #b0362e;
+                        height: 60px;
+                    }""",
+        ):
+            if st.button("Delete a key", use_container_width=True):
+                dialogue_delete_key()
+
+with c1:
+    st.write("")
+    st.subheader("Agents")
+    # View of all the agents
+    dataAgents = get_all_agents()
+    i=0
+    col1 , col2, col3= st.columns(3)
+    for agent in dataAgents:
+        i +=1
+        # modulo len
+        match i % 3:
+            case 1:
+                with col1:
+                    create_button_agent(agent)
+            case 2:
+                with col2:
+                    create_button_agent(agent)
+            case 0:
+                with col3:
+                    create_button_agent(agent)
+
 
 
 
