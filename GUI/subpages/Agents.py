@@ -9,7 +9,8 @@ from streamlit_extras.stylable_container import stylable_container
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../')))
 
 # Importer la fonction depuis ToJson.py
-from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent, get_keys, delete_key, getfirstconversation, gethistorique
+from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, delete_agent, get_keys, delete_key, \
+    getfirstconversation, gethistorique
 
 
 # Functions
@@ -18,10 +19,14 @@ from Utils.Tojson import get_key, add_key, create_an_agent, get_all_agents, dele
 @st.dialog("Add a key")
 def dialog_create_key():
     model_ids = [
-        "groq",
-        "openai",
+        "Groq",
+        "Openai",
     ]
-    st.session_state.newapibase = st.selectbox("Please enter the api base of your key", model_ids)
+    st.session_state.resultbase = st.selectbox("Please enter the api base of your key", model_ids)
+    if st.session_state.resultbase == "Groq":
+        st.session_state.newapibase = "groqkey"
+    else:
+        st.session_state.newapibase = "openaikey"
     st.session_state.newkeyname = st.text_input("Please enter your name key")
     st.session_state.newkey = st.text_input("Please enter your key")
     with stylable_container(
@@ -54,6 +59,10 @@ def dialog_create_key():
 @st.dialog("Create an agent with Groq")
 def dialog_create_groq_agent():
     keynames = get_key("groqkey")
+    if "keyname" not in st.session_state:
+        st.session_state.keyname = ""
+    if "key" not in st.session_state:
+        st.session_state.key = ""
     if keynames is not None:
         st.session_state.keyname = st.selectbox("Choose a key name", keynames)
         st.session_state.key = keynames[st.session_state.keyname]
@@ -187,8 +196,8 @@ def dialog_create_ollama_agent():
     st.divider()
     st.write("You don't need a key to use Ollama, because it's locally installed")
     st.divider()
-    st.write("Be careful, models of 8b are heavy (4go), be sure to have a good computer")
-    st.write("Be careful, models of 70b are really heavy (50go), be sure to have a strong computer")
+    st.error("Be careful, models of 8b are heavy (4go), be sure to have a good computer")
+    st.error("Be careful, models of 70b are really heavy (50go), be sure to have a strong computer")
     model_ids = [
         "llama3.1:8b",
         "gemma2:2b",
@@ -216,11 +225,30 @@ def dialog_create_ollama_agent():
 @st.dialog("Delete an agent")
 def confirm_delete_agent(agentname):
     st.write("Are you sure you want to delete this agent ?")
-    if st.button("Yes"):
-        delete_agent(agentname)
-        st.rerun()
-    if st.button("No"):
-        st.rerun()
+    with stylable_container(
+            "delete_yes",
+            css_styles="""
+                    button {
+                        color: #b0362e;
+                        border: 2px solid #b0362e;
+                        height: 30px;
+                    }""",
+    ):
+        if st.button("Yes", use_container_width=True):
+            delete_agent(agentname)
+            st.session_state.agentname = ""
+            st.rerun()
+    with stylable_container(
+            "delete_no",
+            css_styles="""
+                    button {
+                        color:  #84996a;
+                        border: 2px solid #9CB380;
+                        height: 30px;
+                    }""",
+    ):
+        if st.button("No", use_container_width=True):
+            st.rerun()
 
 def create_button_agent(agent):
     with st.container(border=True, height=270):
@@ -266,7 +294,7 @@ def dialogue_delete_key():
         st.write("You don't have any key")
         st.rerun()
     with stylable_container(
-            "delete_agent",
+            "delete_key",
             css_styles="""
                                 button {
                                     color: #b0362e;
@@ -349,7 +377,8 @@ with c1:
             case 0:
                 with col3:
                     create_button_agent(agent)
-
+    if len(dataAgents) == 0:
+        st.info("You don't have any agent, add yours !")
 
 
 

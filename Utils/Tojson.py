@@ -119,3 +119,11 @@ def set_context(agentname, nameconversation, context):
     with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
         json.dump(data, file, indent=4)
     return True
+
+def delete_last_elmt_conversation(agentname, nameconversation):
+    with open(f'YourAgents/Agents/{agentname}.json', 'r') as file:
+        data = json.load(file)
+        data['conversation'][nameconversation]['historique'].pop()
+    with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True

@@ -9,7 +9,7 @@ sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../'
 
 # Importer la fonction depuis ToJson.py
 from Utils.Tojson import gethistorique, addtohistorique, getconversations, addconversation, getfirstconversation, \
-    deleteconversation, get_context, set_context
+    deleteconversation, get_context, set_context, delete_last_elmt_conversation
 from Utils.LLM import call_llm, download_model_ollama
 
 
@@ -43,10 +43,18 @@ def generate_chat_stream():
         ):
             with (st.chat_message(elmt["role"])):
                     if elmt == st.session_state.historique[long - 1] and type(elmt["content"]) != str:
-                        content = st.write_stream(elmt["content"])
-                        elmt["content"] = content + "\n"
-                        addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "assistant",
-                                        elmt["content"])
+                        try :
+                            content = st.write_stream(elmt["content"])
+                            elmt["content"] = content + "\n"
+                            addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "assistant",
+                                            elmt["content"])
+                        except Exception as e:
+                            if "try pulling it first" in str(e):
+                                with st.spinner(
+                                        "The model is downloading, it can be long, depending on your connection speed"):
+                                    download_model_ollama(st.session_state.agentmodel)
+                            else:
+                                st.warning("An error occured in the call of the LLM")
                     else:
                         st.write('<p>' + elmt["content"] + '</p>', unsafe_allow_html=True)
                     c1, c2 = st.columns([2,1])
@@ -62,11 +70,13 @@ def generate_chat_stream():
             response = call_llm(message, st.session_state.apibase, st.session_state.agentmodel, st.session_state.historique,
                                 st.session_state.context, st.session_state.agentkey)
         if response == "The model you are trying is not downloaded, start of the download":
-            st.warning("The model you are trying is not downloaded, start of the download")
+            st.warning(response)
             with st.spinner("The model is downloading, it can be long, depending on your connection speed"):
                 download_model_ollama(st.session_state.agentmodel)
+                delete_last_elmt_conversation(st.session_state.agentname, st.session_state.nameconversation)
         elif response == "An error occured in the call of the LLM":
-            st.warning("An error occured in the call of the LLM")
+            st.warning(response)
+            delete_last_elmt_conversation(st.session_state.agentname, st.session_state.nameconversation)
         else:
             st.session_state.save_reply = response
         st.rerun()

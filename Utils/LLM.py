@@ -59,12 +59,12 @@ def call_llm(message, apibase, model, historique, context, key=None):
             }
         )
     except Exception as error:
-        print(error)
         if "try pulling it first" in str(error):
             response = "The model you are trying is not downloaded, start of the download"
         else :
             response = "An error occured in the call of the LLM"
-    historique.append({"role": "assistant", "content": response})
+    if response !="The model you are trying is not downloaded, start of the download" and response != "An error occured in the call of the LLM":
+        historique.append({"role": "assistant", "content": response})
     return response
 
 def download_model_ollama(model):
