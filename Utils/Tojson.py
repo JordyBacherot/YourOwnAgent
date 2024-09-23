@@ -127,3 +127,16 @@ def delete_last_elmt_conversation(agentname, nameconversation):
     with open(f'YourAgents/Agents/{agentname}.json', 'w') as file:
         json.dump(data, file, indent=4)
     return True
+
+def get_first_access():
+    with open('YourAgents/moreconfig.json', 'r') as file:
+        data = json.load(file)
+        return data["first_access"]
+
+def set_first_access():
+    with open('YourAgents/moreconfig.json', 'r') as file:
+        data = json.load(file)
+        data["first_access"] = False
+    with open('YourAgents/moreconfig.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True

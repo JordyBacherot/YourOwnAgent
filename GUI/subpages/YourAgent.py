@@ -49,12 +49,15 @@ def generate_chat_stream():
                             addtohistorique(st.session_state.agentname, st.session_state.nameconversation, "assistant",
                                             elmt["content"])
                         except Exception as e:
+                            print(str(e))
                             if "try pulling it first" in str(e):
                                 with st.spinner(
                                         "The model is downloading, it can be long, depending on your connection speed"):
                                     download_model_ollama(st.session_state.agentmodel)
                             else:
                                 st.warning("An error occured in the call of the LLM")
+                                if st.session_state.apibase == "ollama":
+                                    st.warning("Ollama is maybe not started on your computer")
                     else:
                         st.write('<p>' + elmt["content"] + '</p>', unsafe_allow_html=True)
                     c1, c2 = st.columns([2,1])
@@ -158,6 +161,7 @@ with st.sidebar:
 col1, col2 = st.columns(2)
 with col1:
     st.write("")
+    st.markdown("#### Conversation : "+st.session_state.nameconversation)
     st.markdown("#### Api Base : "+st.session_state.apibase)
     st.markdown("#### Model : "+st.session_state.agentmodel)
 
