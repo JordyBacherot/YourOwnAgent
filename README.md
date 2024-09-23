@@ -16,11 +16,35 @@ Puis une seconde partie sur de la gestion de tâche et d'emploi du temps directe
 
 ## Installation
 
+
 ### Dépendances 
 
 Grâce à la librairie Poetry
+Installer poetry :
 
-### Docker
+```bash
+pip install poetry
+```
+
+Installer les dépendances :
+
+```bash
+poetry install
+```
+
+ou avec les requirements.txt
+
+```bash
+pip install -r requirements.txt
+```
+
+## Lancement de l'application 
+
+```bash
+streamlit run GUI/Launcher.py
+```
+
+## Docker
 
 Il est possible d'utiliser directement l'image disponible sur Git et l'ajouter sur Docker
 
@@ -30,10 +54,18 @@ Créer l'image :
 Lancer l'image :
 
 
-### Sous fonctionalités
+## Sous fonctionalités
+
+### Exporter les dépendances 
+
+Avec poetry :
+
+```bash
+poetry export -f requirements.txt --output requirements.txt
+```
 
 
-#### Ollama
+### Ollama
 
 Afin de pouvoir exploiter l'entièreté de l'application, il est conseillé de télécharger Ollama, qui vous permettra d'utiliser vos agents IA localement sur votre ordinateur
 
