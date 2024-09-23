@@ -44,16 +44,6 @@ pip install -r requirements.txt
 streamlit run GUI/Launcher.py
 ```
 
-## Docker
-
-Il est possible d'utiliser directement l'image disponible sur Git et l'ajouter sur Docker
-
-Créer l'image :
-
-
-Lancer l'image :
-
-
 ## Sous fonctionalités
 
 ### Exporter les dépendances 
@@ -63,7 +53,6 @@ Avec poetry :
 ```bash
 poetry export -f requirements.txt --output requirements.txt
 ```
-
 
 ### Ollama
 
