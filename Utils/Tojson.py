@@ -140,3 +140,18 @@ def set_first_access():
     with open('YourAgents/moreconfig.json', 'w') as file:
         json.dump(data, file, indent=4)
     return True
+
+def get_calendar_data():
+    with open('YourAgents/data_schedule.json', 'r') as file:
+        data = json.load(file)
+        return data
+
+def add_event_calendar(title, startDate, endDate, startTime, endTime):
+    to_add_start = startDate + "T" + startTime
+    to_add_end = endDate + "T" + endTime
+    with open('YourAgents/data_schedule.json', 'r') as file:
+        data = json.load(file)
+        data['calendar_events'].append({"title": title, "start": to_add_start, "end": to_add_end})
+    with open('YourAgents/data_schedule.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True

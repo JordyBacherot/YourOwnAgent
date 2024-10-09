@@ -3198,6 +3198,20 @@ watchdog = {version = ">=2.1.5,<5", markers = "platform_system != \"Darwin\""}
 snowflake = ["snowflake-connector-python (>=2.8.0)", "snowflake-snowpark-python[modin] (>=1.17.0)"]
 
 [[package]]
+name = "streamlit-calendar"
+version = "1.2.0"
+description = "📆 A Streamlit component to show callendar using FullCalendar (https://fullcalendar.io)"
+optional = false
+python-versions = "<4.0,>=3.8"
+files = [
+    {file = "streamlit_calendar-1.2.0-py3-none-any.whl", hash = "sha256:1d295e9d726d2ffd36bf8afdbf278a623f0cafa2eac3c45cdbdadb1e4d85dff7"},
+    {file = "streamlit_calendar-1.2.0.tar.gz", hash = "sha256:e43d763e58efef568b52838bde0817e13c1d1572fe558cf06932ae36d6485805"},
+]
+
+[package.dependencies]
+streamlit = ">=1.12.0,<2.0.0"
+
+[[package]]
 name = "streamlit-camera-input-live"
 version = "0.2.0"
 description = "Alternative version of st.camera_input which returns the webcam images live, without any button press needed"
@@ -3682,4 +3696,4 @@ test = ["pytest"]
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "9c1194e3630f19d4e8e0b922ff1fe5fd3192ea155ffeb475c132b23885f0c09e"
+content-hash = "843c2afa3c95dd491745afe5a564f2ea4739998bb3ace0466a7e085d8fcd7785"

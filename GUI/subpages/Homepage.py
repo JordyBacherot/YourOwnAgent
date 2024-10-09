@@ -43,4 +43,4 @@ with col4:
                             }""",
         ):
             if st.button(r"$\textsf{\Large Access to your schedule}$", use_container_width=True):
-                st.switch_page('subpages/Agents.py')
+                st.switch_page('subpages/Schedule.py')
