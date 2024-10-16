@@ -1,0 +1,13 @@
+{
+    "tasks": [
+        {
+            "name": "Explore",
+            "description": "Explore fonctionnality of YOA !",
+            "status": "To Do",
+            "warning_level": "High",
+            "points": 5
+        }
+    ],
+    "points_on_week": {
+    }
+}

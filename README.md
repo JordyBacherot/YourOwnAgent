@@ -68,6 +68,10 @@ Librairie facilitant l'implémentation des LLM et des outils
 ### Streamlit 
 Interface Graphique
 
+### streamlit-calendar
+
+Pour l'implémentation du calendrier, voir : https://github.com/im-perativa/streamlit-calendar/tree/master
+
 ## Auteur
 
 Jordy Bacherot

@@ -1,5 +1,8 @@
 import json
 import os
+from datetime import datetime, timedelta
+
+import pandas as pd
 
 
 # look if a specific dictionary is present in yourkeys.json, if present return the content of the dictionnary
@@ -17,7 +20,6 @@ def get_keys():
     tab_keys=[]
     for base in data:
         for key in data[base]:
-            print(key)
             tab_keys.append(key)
     return tab_keys
 
@@ -146,12 +148,92 @@ def get_calendar_data():
         data = json.load(file)
         return data
 
-def add_event_calendar(title, startDate, endDate, startTime, endTime):
+def add_event_calendar(name, startDate, endDate, startTime, endTime):
     to_add_start = startDate + "T" + startTime
     to_add_end = endDate + "T" + endTime
     with open('YourAgents/data_schedule.json', 'r') as file:
         data = json.load(file)
-        data['calendar_events'].append({"title": title, "start": to_add_start, "end": to_add_end})
+        data['calendar_events'].append({"name": name, "start": to_add_start, "end": to_add_end})
     with open('YourAgents/data_schedule.json', 'w') as file:
         json.dump(data, file, indent=4)
     return True
+
+def add_task(name, description, warning_level, points):
+    with open('YourAgents/data_tasks.json', 'r') as file:
+        data = json.load(file)
+        data['tasks'].append({"name": name, "description": description, "status": "To Do", "warning_level": warning_level, "points": points})
+    with open('YourAgents/data_tasks.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True
+
+def change_task_warning_level(name, warning_level):
+    with open('YourAgents/data_tasks.json', 'r') as file:
+        data = json.load(file)
+        for task in data['tasks']:
+            if task['name'] == name:
+                task['warning_level'] = warning_level
+    with open('YourAgents/data_tasks.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True
+
+def change_task_status(name, status):
+    with open('YourAgents/data_tasks.json', 'r') as file:
+        data = json.load(file)
+        for task in data['tasks']:
+            if task['name'] == name:
+                if status == "Done" and task['status'] != "Done":
+                    date_du_jour = datetime.today().date()
+                    add_point_day(str(date_du_jour), task['points'], data)
+                task['status'] = status
+    with open('YourAgents/data_tasks.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True
+
+def get_tasks():
+    with open('YourAgents/data_tasks.json', 'r') as file:
+        data = json.load(file)
+        return data['tasks']
+
+def delete_task(name):
+    with open('YourAgents/data_tasks.json', 'r') as file:
+        data = json.load(file)
+        for task in data['tasks']:
+            if task['name'] == name:
+                data['tasks'].remove(task)
+    with open('YourAgents/data_tasks.json', 'w') as file:
+        json.dump(data, file, indent=4)
+    return True
+
+def add_point_day(date, points, data):
+    if date in data['points_on_week']:
+        data['points_on_week'][date] += points
+    else :
+        data['points_on_week']= {date : points}
+    return True
+
+def get_data_week_points():
+    with open('YourAgents/data_tasks.json', 'r') as file:
+        data = json.load(file)
+    # récupère le jour actuelle, les 3 jours précédents et les 3 jours suivants
+    date_du_jour = datetime.today().date()
+    tab_recap = []
+    jours = [date_du_jour - timedelta(days=i) for i in range(3, 0, -1)]
+
+    jours += [date_du_jour]
+
+    jours += [date_du_jour + timedelta(days=i) for i in range(1, 4)]
+
+    for jour in jours:
+        if str(jour) in data['points_on_week']:
+            tab_recap.append({"date": str(jour), "points": data['points_on_week'][str(jour)]})
+        else :
+            tab_recap.append({"date": str(jour), "points": 0})
+
+    # transform the date by the day of the week (Monday, ...)
+    for day in tab_recap:
+        day["date"] = datetime.strptime(day["date"], '%Y-%m-%d').strftime('%A')
+
+    # transform la data pd.dataframe
+    tab_recap = pd.DataFrame(tab_recap)
+
+    return tab_recap

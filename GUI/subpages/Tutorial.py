@@ -86,3 +86,12 @@ st.markdown(
     Finally just create your agent and add the key to it.\n
     """
 )
+
+st.subheader("Schedule and Tasks")
+st.markdown(
+    """
+    In the application you can also **manage your schedule and tasks**.\n
+    You can add, modify and delete tasks.\n
+    You can also add events to your schedule.\n
+    """
+)

@@ -14,6 +14,7 @@ if get_first_access():
         "Welcome": [
             st.Page("subpages/Tutorial.py", title="Tutorial"),
             st.Page("subpages/Homepage.py", title="Homepage"),
+            st.Page("subpages/YourTasks.py", title="Your Tasks"),
             st.Page("subpages/Schedule.py", title="Schedule"),
         ],
         "Agents": [
@@ -26,6 +27,7 @@ else :
         "Welcome": [
             st.Page("subpages/Homepage.py", title="Homepage"),
             st.Page("subpages/Tutorial.py", title="Tutorial"),
+            st.Page("subpages/YourTasks.py", title="Your Tasks"),
             st.Page("subpages/Schedule.py", title="Schedule"),
         ],
         "Agents": [
