@@ -138,7 +138,6 @@ with st.container():
 
     with col4:
         data = get_data_week_points()
-        print(data)
         st.subheader("Your Statistics")
         st.altair_chart(alt.Chart(data).mark_bar().encode(
             x=alt.X('date', sort=None, title="Day of week"),
